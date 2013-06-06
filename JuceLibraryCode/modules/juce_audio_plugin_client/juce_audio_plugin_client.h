@@ -1,13 +1,34 @@
-// This is an auto-generated file to redirect any included
-// module headers to the correct external folder.
+/*
+  ==============================================================================
 
-#if defined (JUCER_XCODE_MAC_F6D2F4CF)
- #include "../../../../../modules/juce_audio_plugin_client/juce_audio_plugin_client.h"
-#elif defined (JUCER_LINUX_MAKE_7346DA2A)
- #include "../../../../../modules/juce_audio_plugin_client/juce_audio_plugin_client.h"
-#elif defined (JUCER_VS2012_78A501F)
- #include "C:/SDKs/juce/modules/juce_audio_plugin_client/juce_audio_plugin_client.h"
-#else
- #error "This file is designed to be used in an Introjucer-generated project!"
-#endif
+   This file is part of the JUCE library - "Jules' Utility Class Extensions"
+   Copyright 2004-11 by Raw Material Software Ltd.
 
+  ------------------------------------------------------------------------------
+
+   JUCE can be redistributed and/or modified under the terms of the GNU General
+   Public License (Version 2), as published by the Free Software Foundation.
+   A copy of the license is included in the JUCE distribution, or can be found
+   online at www.gnu.org/licenses.
+
+   JUCE is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+   A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+  ------------------------------------------------------------------------------
+
+   To release a closed-source product which uses JUCE, commercial licenses are
+   available: visit www.rawmaterialsoftware.com/juce for more information.
+
+  ==============================================================================
+*/
+
+#ifndef __JUCE_AUDIO_PLUGIN_CLIENT_JUCEHEADER__
+#define __JUCE_AUDIO_PLUGIN_CLIENT_JUCEHEADER__
+
+#include "../juce_gui_basics/juce_gui_basics.h"
+#include "../juce_audio_basics/juce_audio_basics.h"
+#include "../juce_audio_processors/juce_audio_processors.h"
+#include "utility/juce_CheckSettingMacros.h"
+
+#endif   // __JUCE_AUDIO_PLUGIN_CLIENT_JUCEHEADER__
