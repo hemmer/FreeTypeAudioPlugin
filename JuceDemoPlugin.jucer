@@ -31,7 +31,7 @@
                        libraryPath="/usr/X11R6/lib/"/>
       </CONFIGURATIONS>
     </LINUX_MAKE>
-    <VS2012 targetFolder="Builds/VisualStudio2012" juceFolder="..\..\modules"
+    <VS2012 targetFolder="Builds/VisualStudio2012" juceFolder="C:\SDKs\juce"
             vstFolder="c:\SDKs\vstsdk2.4">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
@@ -71,7 +71,6 @@
     <MODULE id="juce_core" showAllCode="1"/>
     <MODULE id="juce_gui_basics" showAllCode="1"/>
     <MODULE id="juce_gui_audio" showAllCode="1"/>
-    <MODULE id="juce_audio_basics" showAllCode="1"/>
     <MODULE id="juce_audio_processors" showAllCode="1"/>
     <MODULE id="juce_graphics" showAllCode="1"/>
     <MODULE id="juce_events" showAllCode="1"/>
@@ -79,5 +78,6 @@
     <MODULE id="juce_audio_devices" showAllCode="1"/>
     <MODULE id="juce_audio_formats" showAllCode="1"/>
     <MODULE id="juce_gui_extra" showAllCode="1" useLocalCopy="0"/>
+    <MODULE id="juce_audio_basics" showAllCode="1" useLocalCopy="1"/>
   </MODULES>
 </JUCERPROJECT>
