@@ -133,7 +133,6 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\CustomLF.cpp"/>
     <ClCompile Include="..\..\Source\FreeTypeAmalgam.c"/>
     <ClCompile Include="..\..\Source\FreeTypeFaces.cpp"/>
     <ClCompile Include="..\..\Source\PluginProcessor.cpp"/>

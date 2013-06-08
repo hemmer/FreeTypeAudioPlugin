@@ -292,9 +292,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Source\CustomLF.cpp">
-      <Filter>JuceDemoPlugin</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\FreeTypeAmalgam.c">
       <Filter>JuceDemoPlugin</Filter>
     </ClCompile>

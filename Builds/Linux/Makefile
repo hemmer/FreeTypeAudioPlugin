@@ -49,7 +49,6 @@ endif
 DEPFLAGS := $(if $(word 2, $(TARGET_ARCH)), , -MMD)
 
 OBJECTS := \
-  $(OBJDIR)/CustomLF_911869b4.o \
   $(OBJDIR)/FreeTypeAmalgam_942b1c97.o \
   $(OBJDIR)/FreeTypeFaces_f95f84f1.o \
   $(OBJDIR)/PluginProcessor_a059e380.o \
@@ -87,11 +86,6 @@ clean:
 strip:
 	@echo Stripping JuceDemoPlugin
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
-
-$(OBJDIR)/CustomLF_911869b4.o: ../../Source/CustomLF.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling CustomLF.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/FreeTypeAmalgam_942b1c97.o: ../../Source/FreeTypeAmalgam.c
 	-@mkdir -p $(OBJDIR)

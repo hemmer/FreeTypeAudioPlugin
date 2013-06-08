@@ -43,11 +43,36 @@ public:
 
 	}
 
-	const Typeface::Ptr CustomLookAndFeel::getTypefaceForFont (Font const& font)
+
+	void drawLabel(Graphics& g, Label& label)
+	{
+		// set up the font with the right size
+		//Font font(label.getFont());
+		//font.setHeight(silkFontSizeSmall);
+		g.setFont(Font (11.0f));
+
+
+		g.fillAll (label.findColour(Label::backgroundColourId));
+
+		const float alpha = label.isEnabled() ? 1.0f : 0.5f;
+
+		g.setColour (label.findColour (Label::textColourId).withMultipliedAlpha (alpha));
+		g.drawFittedText(label.getText(), 4, 4,
+			label.getWidth() - 2, label.getHeight() - 8,
+			Justification::centredLeft, 1, 1.0f);
+
+
+		g.setColour (label.findColour (Label::outlineColourId).withMultipliedAlpha (alpha));
+		g.drawRect (0, 0, label.getWidth(), label.getHeight());
+
+	}
+
+
+
+	const Typeface::Ptr getTypefaceForFont (Font const& font)
 	{
 		Typeface::Ptr tf;
 		String faceName (font.getTypefaceName());
-
 
 		// Make requests for the default sans serif font use our
 		// FreeType hinted font instead.
