@@ -38,8 +38,9 @@ public:
 		// use hinting when the font height is between 7 and 12 inclusive.
 		FreeTypeFaces::addFaceFromMemory(
 			7.f, 12.f, true,
-			BinaryData::visitor1_ttf,
-			BinaryData::visitor1_ttfSize);
+			BinaryData::slkscr_ttf, BinaryData::slkscr_ttfSize);
+//			BinaryData::visitor1_ttf,
+//			BinaryData::visitor1_ttfSize);
 
 	}
 
@@ -49,7 +50,7 @@ public:
 		// set up the font with the right size
 		//Font font(label.getFont());
 		//font.setHeight(silkFontSizeSmall);
-		g.setFont(Font (11.0f));
+		g.setFont(Font (10.f));
 
 
 		g.fillAll (label.findColour(Label::backgroundColourId));
@@ -86,7 +87,7 @@ public:
 			Font f (font);
 			// You'll need to know the exact name embedded in the font. There
 			// are a variety of free programs for retrieving this information.
-			f.setTypefaceName ("Visitor TT1 BRK");
+			f.setTypefaceName ("Silkscreen");
 
 			DBG(f.getTypefaceName());
 

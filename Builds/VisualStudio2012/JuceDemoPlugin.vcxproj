@@ -1594,6 +1594,7 @@
     <ClInclude Include="..\..\JuceLibraryCode\JuceHeader.h"/>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\slkscr.ttf"/>
     <None Include="..\..\..\..\..\..\Users\hemmer\AppData\Local\Temp\Rar$DRa0.710\visitor1.ttf"/>
     <None Include="..\..\mine"/>
     <None Include="D:\Users\hemmer\Documents\C++\JUCE\mlrVST\Resources\silkfont"/>

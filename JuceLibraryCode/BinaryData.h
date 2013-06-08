@@ -6,6 +6,9 @@
 
 namespace BinaryData
 {
+    extern const char*   slkscr_ttf;
+    const int            slkscr_ttfSize = 7636;
+
     extern const char*   visitor1_ttf;
     const int            visitor1_ttfSize = 27552;
 

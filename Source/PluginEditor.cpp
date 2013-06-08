@@ -30,16 +30,16 @@ JuceDemoPluginAudioProcessorEditor::JuceDemoPluginAudioProcessorEditor (JuceDemo
     gainSlider.setRange (0.0, 1.0, 0.01);
 
     addAndMakeVisible (&delaySlider);
-    delaySlider.setSliderStyle (Slider::Rotary);
+	delaySlider.setSliderStyle (Slider::LinearHorizontal);
     delaySlider.addListener (this);
     delaySlider.setRange (0.0, 1.0, 0.01);
 
     // add some labels for the sliders..
     gainLabel.attachToComponent (&gainSlider, false);
-    gainLabel.setFont (Font (11.0f));
+    gainLabel.setFont (Font (10.0f));
 
     delayLabel.attachToComponent (&delaySlider, false);
-    delayLabel.setFont (Font (11.0f));
+    delayLabel.setFont (Font (10.0f));
 
     // add the midi keyboard component..
     addAndMakeVisible (&midiKeyboard);
