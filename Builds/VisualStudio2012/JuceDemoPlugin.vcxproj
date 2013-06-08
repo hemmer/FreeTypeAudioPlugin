@@ -1597,6 +1597,7 @@
   <ItemGroup>
     <None Include="..\..\mine"/>
     <None Include="D:\Users\hemmer\Documents\C++\JUCE\mlrVST\Resources\silkfont"/>
+    <None Include="..\..\VISITOR"/>
     <None Include="..\..\JuceLibraryCode\modules\juce_audio_basics\juce_module_info"/>
     <None Include="..\..\JuceLibraryCode\modules\juce_audio_devices\juce_module_info"/>
     <None Include="..\..\JuceLibraryCode\modules\juce_audio_formats\juce_module_info"/>

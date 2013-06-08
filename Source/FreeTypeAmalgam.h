@@ -59,7 +59,7 @@
 /*                                                                         */
 /*    Build macros of the FreeType 2 library.                              */
 /*                                                                         */
-/*  Copyright 1996-2008, 2010, 2012, 2013 by                               */
+/*  Copyright 1996-2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2010 by */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -351,30 +351,6 @@
    *
    */
 #define FT_RENDER_H  <freetype/ftrender.h>
-
-  /*************************************************************************
-   *
-   * @macro:
-   *   FT_AUTOHINTER_H
-   *
-   * @description:
-   *   A macro used in #include statements to name the file containing
-   *   structures and macros related to the auto-hinting module.
-   *
-   */
-#define FT_AUTOHINTER_H  <freetype/ftautoh.h>
-
-  /*************************************************************************
-   *
-   * @macro:
-   *   FT_CFF_DRIVER_H
-   *
-   * @description:
-   *   A macro used in #include statements to name the file containing
-   *   structures and macros related to the CFF driver module.
-   *
-   */
-#define FT_CFF_DRIVER_H  <freetype/ftcffdrv.h>
 
   /*************************************************************************
    *
@@ -883,7 +859,7 @@
 /*                                                                         */
 /*    FreeType high-level API and common types (specification only).       */
 /*                                                                         */
-/*  Copyright 1996-2013 by                                                 */
+/*  Copyright 1996-2012 by                                                 */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -912,7 +888,7 @@
 /*                                                                         */
 /*    ANSI-specific configuration file (specification only).               */
 /*                                                                         */
-/*  Copyright 1996-2004, 2006-2008, 2010-2011, 2013 by                     */
+/*  Copyright 1996-2004, 2006-2008, 2010-2011 by                           */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -952,7 +928,7 @@
 /*                                                                         */
 /*    User-selectable configuration macros (specification only).           */
 /*                                                                         */
-/*  Copyright 1996-2013 by                                                 */
+/*  Copyright 1996-2012 by                                                 */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -1085,7 +1061,7 @@ FT_BEGIN_HEADER
   /*                                                                       */
   /*   Define this macro if you want to enable this `feature'.             */
   /*                                                                       */
-//#define FT_CONFIG_OPTION_USE_LZW
+#define FT_CONFIG_OPTION_USE_LZW
 
   /*************************************************************************/
   /*                                                                       */
@@ -1099,7 +1075,7 @@ FT_BEGIN_HEADER
   /*   Define this macro if you want to enable this `feature'.  See also   */
   /*   the macro FT_CONFIG_OPTION_SYSTEM_ZLIB below.                       */
   /*                                                                       */
-//#define FT_CONFIG_OPTION_USE_ZLIB
+#define FT_CONFIG_OPTION_USE_ZLIB
 
   /*************************************************************************/
   /*                                                                       */
@@ -1473,27 +1449,6 @@ FT_BEGIN_HEADER
 
   /*************************************************************************/
   /*                                                                       */
-  /* Define TT_CONFIG_OPTION_SUBPIXEL_HINTING if you want to compile       */
-  /* EXPERIMENTAL subpixel hinting support into the TrueType driver.  This */
-  /* replaces the native TrueType hinting mechanism when anything but      */
-  /* FT_RENDER_MODE_MONO is requested.                                     */
-  /*                                                                       */
-  /* Enabling this causes the TrueType driver to ignore instructions under */
-  /* certain conditions.  This is done in accordance with the guide here,  */
-  /* with some minor differences:                                          */
-  /*                                                                       */
-  /*  http://www.microsoft.com/typography/cleartype/truetypecleartype.aspx */
-  /*                                                                       */
-  /* By undefining this, you only compile the code necessary to hint       */
-  /* TrueType glyphs with native TT hinting.                               */
-  /*                                                                       */
-  /*   This option requires TT_CONFIG_OPTION_BYTECODE_INTERPRETER to be    */
-  /*   defined.                                                            */
-  /*                                                                       */
-/* #define TT_CONFIG_OPTION_SUBPIXEL_HINTING */
-
-  /*************************************************************************/
-  /*                                                                       */
   /* If you define TT_CONFIG_OPTION_UNPATENTED_HINTING, a special version  */
   /* of the TrueType bytecode interpreter is used that doesn't implement   */
   /* any of the patented opcodes and algorithms.  The patents related to   */
@@ -1673,10 +1628,36 @@ FT_BEGIN_HEADER
   /* */
 
   /*
-   *  This macro is obsolete.  Support has been removed in FreeType
-   *  version 2.5.
+   * Define this variable if you want to keep the layout of internal
+   * structures that was used prior to FreeType 2.2.  This also compiles in
+   * a few obsolete functions to avoid linking problems on typical Unix
+   * distributions.
+   *
+   * For embedded systems or building a new distribution from scratch, it
+   * is recommended to disable the macro since it reduces the library's code
+   * size and activates a few memory-saving optimizations as well.
    */
-/* #define FT_CONFIG_OPTION_OLD_INTERNALS */
+#define FT_CONFIG_OPTION_OLD_INTERNALS
+
+  /*
+   *  To detect legacy cache-lookup call from a rogue client (<= 2.1.7),
+   *  we restrict the number of charmaps in a font.  The current API of
+   *  FTC_CMapCache_Lookup() takes cmap_index & charcode, but old API
+   *  takes charcode only.  To determine the passed value is for cmap_index
+   *  or charcode, the possible cmap_index is restricted not to exceed
+   *  the minimum possible charcode by a rogue client.  It is also very
+   *  unlikely that a rogue client is interested in Unicode values 0 to 15.
+   *
+   *  NOTE: The original threshold was 4 deduced from popular number of
+   *        cmap subtables in UCS-4 TrueType fonts, but now it is not
+   *        irregular for OpenType fonts to have more than 4 subtables,
+   *        because variation selector subtables are available for Apple
+   *        and Microsoft platforms.
+   */
+
+#ifdef FT_CONFIG_OPTION_OLD_INTERNALS
+#define FT_MAX_CHARMAP_CACHEABLE 15
+#endif
 
   /*
    * This macro is defined if either unpatented or native TrueType
@@ -1705,7 +1686,7 @@ FT_END_HEADER
 /*    ANSI-specific library and header configuration file (specification   */
 /*    only).                                                               */
 /*                                                                         */
-/*  Copyright 2002-2007, 2009, 2011-2012 by                                */
+/*  Copyright 2002-2007, 2009, 2011 by                                     */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -1842,7 +1823,7 @@ FT_END_HEADER
 								/*       on certain platforms           */
 
 #define ft_longjmp     longjmp
-#define ft_setjmp( b ) setjmp( *(ft_jmp_buf*) &(b) ) /* same thing here */
+#define ft_setjmp( b ) setjmp( *(jmp_buf*) &(b) )    /* same thing here */
 
   /* the following is only used for debugging purposes, i.e., if */
   /* FT_DEBUG_LEVEL_ERROR or FT_DEBUG_LEVEL_TRACE are defined    */
@@ -2001,28 +1982,6 @@ FT_BEGIN_HEADER
   /*                                                                       */
   typedef unsigned XXX  FT_UInt32;
 
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Type>                                                                */
-  /*    FT_Int64                                                           */
-  /*                                                                       */
-  /*    A typedef for a 64bit signed integer type.  The size depends on    */
-  /*    the configuration.  Only defined if there is real 64bit support;   */
-  /*    otherwise, it gets emulated with a structure (if necessary).       */
-  /*                                                                       */
-  typedef signed XXX  FT_Int64;
-
-  /*************************************************************************/
-  /*                                                                       */
-  /* <Type>                                                                */
-  /*    FT_UInt64                                                          */
-  /*                                                                       */
-  /*    A typedef for a 64bit unsigned integer type.  The size depends on  */
-  /*    the configuration.  Only defined if there is real 64bit support;   */
-  /*    otherwise, it gets emulated with a structure (if necessary).       */
-  /*                                                                       */
-  typedef unsigned XXX  FT_UInt64;
-
   /* */
 
 #endif
@@ -2060,15 +2019,13 @@ FT_BEGIN_HEADER
 
   /* FT_LONG64 must be defined if a 64-bit type is available */
 #define FT_LONG64
-#define FT_INT64   long
-#define FT_UINT64  unsigned long
+#define FT_INT64  long
 
 #elif defined( _MSC_VER ) && _MSC_VER >= 900  /* Visual C++ (and Intel C++) */
 
   /* this compiler provides the __int64 type */
 #define FT_LONG64
-#define FT_INT64   __int64
-#define FT_UINT64  unsigned __int64
+#define FT_INT64  __int64
 
 #elif defined( __BORLANDC__ )  /* Borland C++ */
 
@@ -2077,8 +2034,7 @@ FT_BEGIN_HEADER
 
   /* this compiler provides the __int64 type */
 #define FT_LONG64
-#define FT_INT64   __int64
-#define FT_UINT64  unsigned __int64
+#define FT_INT64  __int64
 
 #elif defined( __WATCOMC__ )   /* Watcom C++ */
 
@@ -2087,15 +2043,13 @@ FT_BEGIN_HEADER
 #elif defined( __MWERKS__ )    /* Metrowerks CodeWarrior */
 
 #define FT_LONG64
-#define FT_INT64   long long int
-#define FT_UINT64  unsigned long long int
+#define FT_INT64  long long int
 
 #elif defined( __GNUC__ )
 
   /* GCC provides the `long long' type */
 #define FT_LONG64
-#define FT_INT64   long long int
-#define FT_UINT64  unsigned long long int
+#define FT_INT64  long long int
 
 #endif /* FT_SIZEOF_LONG == (64 / FT_CHAR_BIT) */
 
@@ -2117,11 +2071,6 @@ FT_BEGIN_HEADER
 #endif /* __STDC__ */
 
 #endif /* FT_LONG64 && !FT_CONFIG_OPTION_FORCE_INT64 */
-
-#ifdef FT_LONG64
-  typedef FT_INT64   FT_Int64;
-  typedef FT_UINT64  FT_UInt64;
-#endif
 
 #define FT_BEGIN_STMNT  do {
 #define FT_END_STMNT    } while ( 0 )
@@ -2180,8 +2129,7 @@ FT_BEGIN_HEADER
 	  "mov    %0, %1, lsr #16\n\t"      /* %0  = %1 >> 16 */
 	  "orr    %0, %0, %2, lsl #16\n\t"  /* %0 |= %2 << 16 */
 	  : "=r"(a), "=&r"(t2), "=&r"(t)
-	  : "r"(a), "r"(b)
-	  : "cc" );
+	  : "r"(a), "r"(b) );
 	return a;
   }
 
@@ -2379,13 +2327,601 @@ FT_END_HEADER
 /*** End of inlined file: ftconfig.h ***/
 
 
+/*** Start of inlined file: fterrors.h ***/
+/*                                                                         */
+/*  fterrors.h                                                             */
+/*                                                                         */
+/*    FreeType error code handling (specification).                        */
+/*                                                                         */
+/*  Copyright 1996-2001, 2002, 2004, 2007 by                               */
+/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
+/*                                                                         */
+/*  This file is part of the FreeType project, and may only be used,       */
+/*  modified, and distributed under the terms of the FreeType project      */
+/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
+/*  this file you indicate that you have read the license and              */
+/*  understand and accept it fully.                                        */
+/*                                                                         */
+/***************************************************************************/
+
+  /*************************************************************************/
+  /*                                                                       */
+  /* This special header file is used to define the handling of FT2        */
+  /* enumeration constants.  It can also be used to generate error message */
+  /* strings with a small macro trick explained below.                     */
+  /*                                                                       */
+  /* I - Error Formats                                                     */
+  /* -----------------                                                     */
+  /*                                                                       */
+  /*   The configuration macro FT_CONFIG_OPTION_USE_MODULE_ERRORS can be   */
+  /*   defined in ftoption.h in order to make the higher byte indicate     */
+  /*   the module where the error has happened (this is not compatible     */
+  /*   with standard builds of FreeType 2).  You can then use the macro    */
+  /*   FT_ERROR_BASE macro to extract the generic error code from an       */
+  /*   FT_Error value.                                                     */
+  /*                                                                       */
+  /*                                                                       */
+  /* II - Error Message strings                                            */
+  /* --------------------------                                            */
+  /*                                                                       */
+  /*   The error definitions below are made through special macros that    */
+  /*   allow client applications to build a table of error message strings */
+  /*   if they need it.  The strings are not included in a normal build of */
+  /*   FreeType 2 to save space (most client applications do not use       */
+  /*   them).                                                              */
+  /*                                                                       */
+  /*   To do so, you have to define the following macros before including  */
+  /*   this file:                                                          */
+  /*                                                                       */
+  /*   FT_ERROR_START_LIST ::                                              */
+  /*     This macro is called before anything else to define the start of  */
+  /*     the error list.  It is followed by several FT_ERROR_DEF calls     */
+  /*     (see below).                                                      */
+  /*                                                                       */
+  /*   FT_ERROR_DEF( e, v, s ) ::                                          */
+  /*     This macro is called to define one single error.                  */
+  /*     `e' is the error code identifier (e.g. FT_Err_Invalid_Argument).  */
+  /*     `v' is the error numerical value.                                 */
+  /*     `s' is the corresponding error string.                            */
+  /*                                                                       */
+  /*   FT_ERROR_END_LIST ::                                                */
+  /*     This macro ends the list.                                         */
+  /*                                                                       */
+  /*   Additionally, you have to undefine __FTERRORS_H__ before #including */
+  /*   this file.                                                          */
+  /*                                                                       */
+  /*   Here is a simple example:                                           */
+  /*                                                                       */
+  /*     {                                                                 */
+  /*       #undef __FTERRORS_H__                                           */
+  /*       #define FT_ERRORDEF( e, v, s )  { e, s },                       */
+  /*       #define FT_ERROR_START_LIST     {                               */
+  /*       #define FT_ERROR_END_LIST       { 0, 0 } };                     */
+  /*                                                                       */
+  /*       const struct                                                    */
+  /*       {                                                               */
+  /*         int          err_code;                                        */
+  /*         const char*  err_msg;                                         */
+  /*       } ft_errors[] =                                                 */
+  /*                                                                       */
+  /*       #include FT_ERRORS_H                                            */
+  /*     }                                                                 */
+  /*                                                                       */
+  /*************************************************************************/
+
+#ifndef __FTERRORS_H__
+#define __FTERRORS_H__
+
+  /* include module base error codes */
+
+/*** Start of inlined file: ftmoderr.h ***/
+/*                                                                         */
+/*  ftmoderr.h                                                             */
+/*                                                                         */
+/*    FreeType module error offsets (specification).                       */
+/*                                                                         */
+/*  Copyright 2001, 2002, 2003, 2004, 2005, 2010 by                        */
+/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
+/*                                                                         */
+/*  This file is part of the FreeType project, and may only be used,       */
+/*  modified, and distributed under the terms of the FreeType project      */
+/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
+/*  this file you indicate that you have read the license and              */
+/*  understand and accept it fully.                                        */
+/*                                                                         */
+/***************************************************************************/
+
+  /*************************************************************************/
+  /*                                                                       */
+  /* This file is used to define the FreeType module error offsets.        */
+  /*                                                                       */
+  /* The lower byte gives the error code, the higher byte gives the        */
+  /* module.  The base module has error offset 0.  For example, the error  */
+  /* `FT_Err_Invalid_File_Format' has value 0x003, the error               */
+  /* `TT_Err_Invalid_File_Format' has value 0x1103, the error              */
+  /* `T1_Err_Invalid_File_Format' has value 0x1203, etc.                   */
+  /*                                                                       */
+  /* Undefine the macro FT_CONFIG_OPTION_USE_MODULE_ERRORS in ftoption.h   */
+  /* to make the higher byte always zero (disabling the module error       */
+  /* mechanism).                                                           */
+  /*                                                                       */
+  /* It can also be used to create a module error message table easily     */
+  /* with something like                                                   */
+  /*                                                                       */
+  /*   {                                                                   */
+  /*     #undef __FTMODERR_H__                                             */
+  /*     #define FT_MODERRDEF( e, v, s )  { FT_Mod_Err_ ## e, s },         */
+  /*     #define FT_MODERR_START_LIST     {                                */
+  /*     #define FT_MODERR_END_LIST       { 0, 0 } };                      */
+  /*                                                                       */
+  /*     const struct                                                      */
+  /*     {                                                                 */
+  /*       int          mod_err_offset;                                    */
+  /*       const char*  mod_err_msg                                        */
+  /*     } ft_mod_errors[] =                                               */
+  /*                                                                       */
+  /*     #include FT_MODULE_ERRORS_H                                       */
+  /*   }                                                                   */
+  /*                                                                       */
+  /* To use such a table, all errors must be ANDed with 0xFF00 to remove   */
+  /* the error code.                                                       */
+  /*                                                                       */
+  /*************************************************************************/
+
+#ifndef __FTMODERR_H__
+#define __FTMODERR_H__
+
+  /*******************************************************************/
+  /*******************************************************************/
+  /*****                                                         *****/
+  /*****                       SETUP MACROS                      *****/
+  /*****                                                         *****/
+  /*******************************************************************/
+  /*******************************************************************/
+
+#undef  FT_NEED_EXTERN_C
+
+#ifndef FT_MODERRDEF
+
+#ifdef FT_CONFIG_OPTION_USE_MODULE_ERRORS
+#define FT_MODERRDEF( e, v, s )  FT_Mod_Err_ ## e = v,
+#else
+#define FT_MODERRDEF( e, v, s )  FT_Mod_Err_ ## e = 0,
+#endif
+
+#define FT_MODERR_START_LIST  enum {
+#define FT_MODERR_END_LIST    FT_Mod_Err_Max };
+
+#ifdef __cplusplus
+#define FT_NEED_EXTERN_C
+  extern "C" {
+#endif
+
+#endif /* !FT_MODERRDEF */
+
+  /*******************************************************************/
+  /*******************************************************************/
+  /*****                                                         *****/
+  /*****               LIST MODULE ERROR BASES                   *****/
+  /*****                                                         *****/
+  /*******************************************************************/
+  /*******************************************************************/
+
+#ifdef FT_MODERR_START_LIST
+  FT_MODERR_START_LIST
+#endif
+
+  FT_MODERRDEF( Base,      0x000, "base module" )
+  FT_MODERRDEF( Autofit,   0x100, "autofitter module" )
+  FT_MODERRDEF( BDF,       0x200, "BDF module" )
+  FT_MODERRDEF( Bzip2,     0x300, "Bzip2 module" )
+  FT_MODERRDEF( Cache,     0x400, "cache module" )
+  FT_MODERRDEF( CFF,       0x500, "CFF module" )
+  FT_MODERRDEF( CID,       0x600, "CID module" )
+  FT_MODERRDEF( Gzip,      0x700, "Gzip module" )
+  FT_MODERRDEF( LZW,       0x800, "LZW module" )
+  FT_MODERRDEF( OTvalid,   0x900, "OpenType validation module" )
+  FT_MODERRDEF( PCF,       0xA00, "PCF module" )
+  FT_MODERRDEF( PFR,       0xB00, "PFR module" )
+  FT_MODERRDEF( PSaux,     0xC00, "PS auxiliary module" )
+  FT_MODERRDEF( PShinter,  0xD00, "PS hinter module" )
+  FT_MODERRDEF( PSnames,   0xE00, "PS names module" )
+  FT_MODERRDEF( Raster,    0xF00, "raster module" )
+  FT_MODERRDEF( SFNT,     0x1000, "SFNT module" )
+  FT_MODERRDEF( Smooth,   0x1100, "smooth raster module" )
+  FT_MODERRDEF( TrueType, 0x1200, "TrueType module" )
+  FT_MODERRDEF( Type1,    0x1300, "Type 1 module" )
+  FT_MODERRDEF( Type42,   0x1400, "Type 42 module" )
+  FT_MODERRDEF( Winfonts, 0x1500, "Windows FON/FNT module" )
+
+#ifdef FT_MODERR_END_LIST
+  FT_MODERR_END_LIST
+#endif
+
+  /*******************************************************************/
+  /*******************************************************************/
+  /*****                                                         *****/
+  /*****                      CLEANUP                            *****/
+  /*****                                                         *****/
+  /*******************************************************************/
+  /*******************************************************************/
+
+#ifdef FT_NEED_EXTERN_C
+  }
+#endif
+
+#undef FT_MODERR_START_LIST
+#undef FT_MODERR_END_LIST
+#undef FT_MODERRDEF
+#undef FT_NEED_EXTERN_C
+
+#endif /* __FTMODERR_H__ */
+
+/* END */
+
+/*** End of inlined file: ftmoderr.h ***/
+
+
+  /*******************************************************************/
+  /*******************************************************************/
+  /*****                                                         *****/
+  /*****                       SETUP MACROS                      *****/
+  /*****                                                         *****/
+  /*******************************************************************/
+  /*******************************************************************/
+
+#undef  FT_NEED_EXTERN_C
+
+#undef  FT_ERR_XCAT
+#undef  FT_ERR_CAT
+
+#define FT_ERR_XCAT( x, y )  x ## y
+#define FT_ERR_CAT( x, y )   FT_ERR_XCAT( x, y )
+
+  /* FT_ERR_PREFIX is used as a prefix for error identifiers. */
+  /* By default, we use `FT_Err_'.                            */
+  /*                                                          */
+#ifndef FT_ERR_PREFIX
+#define FT_ERR_PREFIX  FT_Err_
+#endif
+
+  /* FT_ERR_BASE is used as the base for module-specific errors. */
+  /*                                                             */
+#ifdef FT_CONFIG_OPTION_USE_MODULE_ERRORS
+
+#ifndef FT_ERR_BASE
+#define FT_ERR_BASE  FT_Mod_Err_Base
+#endif
+
+#else
+
+#undef FT_ERR_BASE
+#define FT_ERR_BASE  0
+
+#endif /* FT_CONFIG_OPTION_USE_MODULE_ERRORS */
+
+  /* If FT_ERRORDEF is not defined, we need to define a simple */
+  /* enumeration type.                                         */
+  /*                                                           */
+#ifndef FT_ERRORDEF
+
+#define FT_ERRORDEF( e, v, s )  e = v,
+#define FT_ERROR_START_LIST     enum {
+#define FT_ERROR_END_LIST       FT_ERR_CAT( FT_ERR_PREFIX, Max ) };
+
+#ifdef __cplusplus
+#define FT_NEED_EXTERN_C
+  extern "C" {
+#endif
+
+#endif /* !FT_ERRORDEF */
+
+  /* this macro is used to define an error */
+#define FT_ERRORDEF_( e, v, s )   \
+		  FT_ERRORDEF( FT_ERR_CAT( FT_ERR_PREFIX, e ), v + FT_ERR_BASE, s )
+
+  /* this is only used for <module>_Err_Ok, which must be 0! */
+#define FT_NOERRORDEF_( e, v, s ) \
+		  FT_ERRORDEF( FT_ERR_CAT( FT_ERR_PREFIX, e ), v, s )
+
+#ifdef FT_ERROR_START_LIST
+  FT_ERROR_START_LIST
+#endif
+
+  /* now include the error codes */
+
+/*** Start of inlined file: fterrdef.h ***/
+/*                                                                         */
+/*  fterrdef.h                                                             */
+/*                                                                         */
+/*    FreeType error codes (specification).                                */
+/*                                                                         */
+/*  Copyright 2002, 2004, 2006, 2007, 2010-2011 by                         */
+/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
+/*                                                                         */
+/*  This file is part of the FreeType project, and may only be used,       */
+/*  modified, and distributed under the terms of the FreeType project      */
+/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
+/*  this file you indicate that you have read the license and              */
+/*  understand and accept it fully.                                        */
+/*                                                                         */
+/***************************************************************************/
+
+  /*******************************************************************/
+  /*******************************************************************/
+  /*****                                                         *****/
+  /*****                LIST OF ERROR CODES/MESSAGES             *****/
+  /*****                                                         *****/
+  /*******************************************************************/
+  /*******************************************************************/
+
+  /* You need to define both FT_ERRORDEF_ and FT_NOERRORDEF_ before */
+  /* including this file.                                           */
+
+  /* generic errors */
+
+  FT_NOERRORDEF_( Ok,                                        0x00, \
+				  "no error" )
+
+  FT_ERRORDEF_( Cannot_Open_Resource,                        0x01, \
+				"cannot open resource" )
+  FT_ERRORDEF_( Unknown_File_Format,                         0x02, \
+				"unknown file format" )
+  FT_ERRORDEF_( Invalid_File_Format,                         0x03, \
+				"broken file" )
+  FT_ERRORDEF_( Invalid_Version,                             0x04, \
+				"invalid FreeType version" )
+  FT_ERRORDEF_( Lower_Module_Version,                        0x05, \
+				"module version is too low" )
+  FT_ERRORDEF_( Invalid_Argument,                            0x06, \
+				"invalid argument" )
+  FT_ERRORDEF_( Unimplemented_Feature,                       0x07, \
+				"unimplemented feature" )
+  FT_ERRORDEF_( Invalid_Table,                               0x08, \
+				"broken table" )
+  FT_ERRORDEF_( Invalid_Offset,                              0x09, \
+				"broken offset within table" )
+  FT_ERRORDEF_( Array_Too_Large,                             0x0A, \
+				"array allocation size too large" )
+  FT_ERRORDEF_( Missing_Module,                              0x0B, \
+				"missing module" )
+
+  /* glyph/character errors */
+
+  FT_ERRORDEF_( Invalid_Glyph_Index,                         0x10, \
+				"invalid glyph index" )
+  FT_ERRORDEF_( Invalid_Character_Code,                      0x11, \
+				"invalid character code" )
+  FT_ERRORDEF_( Invalid_Glyph_Format,                        0x12, \
+				"unsupported glyph image format" )
+  FT_ERRORDEF_( Cannot_Render_Glyph,                         0x13, \
+				"cannot render this glyph format" )
+  FT_ERRORDEF_( Invalid_Outline,                             0x14, \
+				"invalid outline" )
+  FT_ERRORDEF_( Invalid_Composite,                           0x15, \
+				"invalid composite glyph" )
+  FT_ERRORDEF_( Too_Many_Hints,                              0x16, \
+				"too many hints" )
+  FT_ERRORDEF_( Invalid_Pixel_Size,                          0x17, \
+				"invalid pixel size" )
+
+  /* handle errors */
+
+  FT_ERRORDEF_( Invalid_Handle,                              0x20, \
+				"invalid object handle" )
+  FT_ERRORDEF_( Invalid_Library_Handle,                      0x21, \
+				"invalid library handle" )
+  FT_ERRORDEF_( Invalid_Driver_Handle,                       0x22, \
+				"invalid module handle" )
+  FT_ERRORDEF_( Invalid_Face_Handle,                         0x23, \
+				"invalid face handle" )
+  FT_ERRORDEF_( Invalid_Size_Handle,                         0x24, \
+				"invalid size handle" )
+  FT_ERRORDEF_( Invalid_Slot_Handle,                         0x25, \
+				"invalid glyph slot handle" )
+  FT_ERRORDEF_( Invalid_CharMap_Handle,                      0x26, \
+				"invalid charmap handle" )
+  FT_ERRORDEF_( Invalid_Cache_Handle,                        0x27, \
+				"invalid cache manager handle" )
+  FT_ERRORDEF_( Invalid_Stream_Handle,                       0x28, \
+				"invalid stream handle" )
+
+  /* driver errors */
+
+  FT_ERRORDEF_( Too_Many_Drivers,                            0x30, \
+				"too many modules" )
+  FT_ERRORDEF_( Too_Many_Extensions,                         0x31, \
+				"too many extensions" )
+
+  /* memory errors */
+
+  FT_ERRORDEF_( Out_Of_Memory,                               0x40, \
+				"out of memory" )
+  FT_ERRORDEF_( Unlisted_Object,                             0x41, \
+				"unlisted object" )
+
+  /* stream errors */
+
+  FT_ERRORDEF_( Cannot_Open_Stream,                          0x51, \
+				"cannot open stream" )
+  FT_ERRORDEF_( Invalid_Stream_Seek,                         0x52, \
+				"invalid stream seek" )
+  FT_ERRORDEF_( Invalid_Stream_Skip,                         0x53, \
+				"invalid stream skip" )
+  FT_ERRORDEF_( Invalid_Stream_Read,                         0x54, \
+				"invalid stream read" )
+  FT_ERRORDEF_( Invalid_Stream_Operation,                    0x55, \
+				"invalid stream operation" )
+  FT_ERRORDEF_( Invalid_Frame_Operation,                     0x56, \
+				"invalid frame operation" )
+  FT_ERRORDEF_( Nested_Frame_Access,                         0x57, \
+				"nested frame access" )
+  FT_ERRORDEF_( Invalid_Frame_Read,                          0x58, \
+				"invalid frame read" )
+
+  /* raster errors */
+
+  FT_ERRORDEF_( Raster_Uninitialized,                        0x60, \
+				"raster uninitialized" )
+  FT_ERRORDEF_( Raster_Corrupted,                            0x61, \
+				"raster corrupted" )
+  FT_ERRORDEF_( Raster_Overflow,                             0x62, \
+				"raster overflow" )
+  FT_ERRORDEF_( Raster_Negative_Height,                      0x63, \
+				"negative height while rastering" )
+
+  /* cache errors */
+
+  FT_ERRORDEF_( Too_Many_Caches,                             0x70, \
+				"too many registered caches" )
+
+  /* TrueType and SFNT errors */
+
+  FT_ERRORDEF_( Invalid_Opcode,                              0x80, \
+				"invalid opcode" )
+  FT_ERRORDEF_( Too_Few_Arguments,                           0x81, \
+				"too few arguments" )
+  FT_ERRORDEF_( Stack_Overflow,                              0x82, \
+				"stack overflow" )
+  FT_ERRORDEF_( Code_Overflow,                               0x83, \
+				"code overflow" )
+  FT_ERRORDEF_( Bad_Argument,                                0x84, \
+				"bad argument" )
+  FT_ERRORDEF_( Divide_By_Zero,                              0x85, \
+				"division by zero" )
+  FT_ERRORDEF_( Invalid_Reference,                           0x86, \
+				"invalid reference" )
+  FT_ERRORDEF_( Debug_OpCode,                                0x87, \
+				"found debug opcode" )
+  FT_ERRORDEF_( ENDF_In_Exec_Stream,                         0x88, \
+				"found ENDF opcode in execution stream" )
+  FT_ERRORDEF_( Nested_DEFS,                                 0x89, \
+				"nested DEFS" )
+  FT_ERRORDEF_( Invalid_CodeRange,                           0x8A, \
+				"invalid code range" )
+  FT_ERRORDEF_( Execution_Too_Long,                          0x8B, \
+				"execution context too long" )
+  FT_ERRORDEF_( Too_Many_Function_Defs,                      0x8C, \
+				"too many function definitions" )
+  FT_ERRORDEF_( Too_Many_Instruction_Defs,                   0x8D, \
+				"too many instruction definitions" )
+  FT_ERRORDEF_( Table_Missing,                               0x8E, \
+				"SFNT font table missing" )
+  FT_ERRORDEF_( Horiz_Header_Missing,                        0x8F, \
+				"horizontal header (hhea) table missing" )
+  FT_ERRORDEF_( Locations_Missing,                           0x90, \
+				"locations (loca) table missing" )
+  FT_ERRORDEF_( Name_Table_Missing,                          0x91, \
+				"name table missing" )
+  FT_ERRORDEF_( CMap_Table_Missing,                          0x92, \
+				"character map (cmap) table missing" )
+  FT_ERRORDEF_( Hmtx_Table_Missing,                          0x93, \
+				"horizontal metrics (hmtx) table missing" )
+  FT_ERRORDEF_( Post_Table_Missing,                          0x94, \
+				"PostScript (post) table missing" )
+  FT_ERRORDEF_( Invalid_Horiz_Metrics,                       0x95, \
+				"invalid horizontal metrics" )
+  FT_ERRORDEF_( Invalid_CharMap_Format,                      0x96, \
+				"invalid character map (cmap) format" )
+  FT_ERRORDEF_( Invalid_PPem,                                0x97, \
+				"invalid ppem value" )
+  FT_ERRORDEF_( Invalid_Vert_Metrics,                        0x98, \
+				"invalid vertical metrics" )
+  FT_ERRORDEF_( Could_Not_Find_Context,                      0x99, \
+				"could not find context" )
+  FT_ERRORDEF_( Invalid_Post_Table_Format,                   0x9A, \
+				"invalid PostScript (post) table format" )
+  FT_ERRORDEF_( Invalid_Post_Table,                          0x9B, \
+				"invalid PostScript (post) table" )
+
+  /* CFF, CID, and Type 1 errors */
+
+  FT_ERRORDEF_( Syntax_Error,                                0xA0, \
+				"opcode syntax error" )
+  FT_ERRORDEF_( Stack_Underflow,                             0xA1, \
+				"argument stack underflow" )
+  FT_ERRORDEF_( Ignore,                                      0xA2, \
+				"ignore" )
+  FT_ERRORDEF_( No_Unicode_Glyph_Name,                       0xA3, \
+				"no Unicode glyph name found" )
+
+  /* BDF errors */
+
+  FT_ERRORDEF_( Missing_Startfont_Field,                     0xB0, \
+				"`STARTFONT' field missing" )
+  FT_ERRORDEF_( Missing_Font_Field,                          0xB1, \
+				"`FONT' field missing" )
+  FT_ERRORDEF_( Missing_Size_Field,                          0xB2, \
+				"`SIZE' field missing" )
+  FT_ERRORDEF_( Missing_Fontboundingbox_Field,               0xB3, \
+				"`FONTBOUNDINGBOX' field missing" )
+  FT_ERRORDEF_( Missing_Chars_Field,                         0xB4, \
+				"`CHARS' field missing" )
+  FT_ERRORDEF_( Missing_Startchar_Field,                     0xB5, \
+				"`STARTCHAR' field missing" )
+  FT_ERRORDEF_( Missing_Encoding_Field,                      0xB6, \
+				"`ENCODING' field missing" )
+  FT_ERRORDEF_( Missing_Bbx_Field,                           0xB7, \
+				"`BBX' field missing" )
+  FT_ERRORDEF_( Bbx_Too_Big,                                 0xB8, \
+				"`BBX' too big" )
+  FT_ERRORDEF_( Corrupted_Font_Header,                       0xB9, \
+				"Font header corrupted or missing fields" )
+  FT_ERRORDEF_( Corrupted_Font_Glyphs,                       0xBA, \
+				"Font glyphs corrupted or missing fields" )
+
+/* END */
+
+/*** End of inlined file: fterrdef.h ***/
+
+
+#ifdef FT_ERROR_END_LIST
+  FT_ERROR_END_LIST
+#endif
+
+  /*******************************************************************/
+  /*******************************************************************/
+  /*****                                                         *****/
+  /*****                      SIMPLE CLEANUP                     *****/
+  /*****                                                         *****/
+  /*******************************************************************/
+  /*******************************************************************/
+
+#ifdef FT_NEED_EXTERN_C
+  }
+#endif
+
+#undef FT_ERROR_START_LIST
+#undef FT_ERROR_END_LIST
+
+#undef FT_ERRORDEF
+#undef FT_ERRORDEF_
+#undef FT_NOERRORDEF_
+
+#undef FT_NEED_EXTERN_C
+#undef FT_ERR_BASE
+
+  /* FT_KEEP_ERR_PREFIX is needed for ftvalid.h */
+#ifndef FT_KEEP_ERR_PREFIX
+#undef FT_ERR_PREFIX
+#else
+#undef FT_KEEP_ERR_PREFIX
+#endif
+
+#endif /* __FTERRORS_H__ */
+
+/* END */
+
+/*** End of inlined file: fterrors.h ***/
+
+
 /*** Start of inlined file: fttypes.h ***/
 /*                                                                         */
 /*  fttypes.h                                                              */
 /*                                                                         */
 /*    FreeType simple types definitions (specification only).              */
 /*                                                                         */
-/*  Copyright 1996-2002, 2004, 2006-2009, 2012, 2013 by                    */
+/*  Copyright 1996-2002, 2004, 2006-2009, 2012 by                          */
 /*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
 /*                                                                         */
 /*  This file is part of the FreeType project, and may only be used,       */
@@ -2781,7 +3317,7 @@ FT_BEGIN_HEADER
   /* <Description>                                                         */
   /*    The type FT_Pos is used to store vectorial coordinates.  Depending */
   /*    on the context, these can represent distances in integer font      */
-  /*    units, or 16.16, or 26.6 fixed-point pixel coordinates.            */
+  /*    units, or 16.16, or 26.6 fixed float pixel coordinates.            */
   /*                                                                       */
   typedef signed long  FT_Pos;
 
@@ -4216,7 +4752,7 @@ FT_BEGIN_HEADER
   /*    FT_F2Dot14                                                         */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    A signed 2.14 fixed-point type used for unit vectors.              */
+  /*    A signed 2.14 fixed float type used for unit vectors.              */
   /*                                                                       */
   typedef signed short  FT_F2Dot14;
 
@@ -4226,7 +4762,7 @@ FT_BEGIN_HEADER
   /*    FT_F26Dot6                                                         */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    A signed 26.6 fixed-point type used for vectorial pixel            */
+  /*    A signed 26.6 fixed float type used for vectorial pixel            */
   /*    coordinates.                                                       */
   /*                                                                       */
   typedef signed long  FT_F26Dot6;
@@ -4237,7 +4773,7 @@ FT_BEGIN_HEADER
   /*    FT_Fixed                                                           */
   /*                                                                       */
   /* <Description>                                                         */
-  /*    This type is used to store 16.16 fixed-point values, like scaling  */
+  /*    This type is used to store 16.16 fixed float values, like scaling  */
   /*    values or matrix coefficients.                                     */
   /*                                                                       */
   typedef signed long  FT_Fixed;
@@ -4315,7 +4851,7 @@ FT_BEGIN_HEADER
   /*                                                                       */
   /* <Description>                                                         */
   /*    A simple structure used to store a 2x2 matrix.  Coefficients are   */
-  /*    in 16.16 fixed-point format.  The computation performed is:        */
+  /*    in 16.16 fixed float format.  The computation performed is:        */
   /*                                                                       */
   /*       {                                                               */
   /*          x' = x*xx + y*xy                                             */
@@ -4513,23 +5049,14 @@ FT_BEGIN_HEADER
   /* */
 
 #define FT_IS_EMPTY( list )  ( (list).head == 0 )
-#define FT_BOOL( x )  ( (FT_Bool)( x ) )
 
-  /* concatenate C tokens */
-#define FT_ERR_XCAT( x, y )  x ## y
-#define FT_ERR_CAT( x, y )   FT_ERR_XCAT( x, y )
-
-  /* see `ftmoderr.h' for descriptions of the following macros */
-
-#define FT_ERR( e )  FT_ERR_CAT( FT_ERR_PREFIX, e )
-
+  /* return base error code (without module-specific prefix) */
 #define FT_ERROR_BASE( x )    ( (x) & 0xFF )
+
+  /* return module error code */
 #define FT_ERROR_MODULE( x )  ( (x) & 0xFF00U )
 
-#define FT_ERR_EQ( x, e )                                        \
-		  ( FT_ERROR_BASE( x ) == FT_ERROR_BASE( FT_ERR( e ) ) )
-#define FT_ERR_NEQ( x, e )                                       \
-		  ( FT_ERROR_BASE( x ) != FT_ERROR_BASE( FT_ERR( e ) ) )
+#define FT_BOOL( x )  ( (FT_Bool)( x ) )
 
 FT_END_HEADER
 
@@ -4538,627 +5065,6 @@ FT_END_HEADER
 /* END */
 
 /*** End of inlined file: fttypes.h ***/
-
-
-/*** Start of inlined file: fterrors.h ***/
-/*                                                                         */
-/*  fterrors.h                                                             */
-/*                                                                         */
-/*    FreeType error code handling (specification).                        */
-/*                                                                         */
-/*  Copyright 1996-2002, 2004, 2007, 2013 by                               */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used,       */
-/*  modified, and distributed under the terms of the FreeType project      */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
-/*                                                                         */
-/***************************************************************************/
-
-  /*************************************************************************/
-  /*                                                                       */
-  /* This special header file is used to define the handling of FT2        */
-  /* enumeration constants.  It can also be used to generate error message */
-  /* strings with a small macro trick explained below.                     */
-  /*                                                                       */
-  /* I - Error Formats                                                     */
-  /* -----------------                                                     */
-  /*                                                                       */
-  /*   The configuration macro FT_CONFIG_OPTION_USE_MODULE_ERRORS can be   */
-  /*   defined in ftoption.h in order to make the higher byte indicate     */
-  /*   the module where the error has happened (this is not compatible     */
-  /*   with standard builds of FreeType 2).  See the file `ftmoderr.h' for */
-  /*   more details.                                                       */
-  /*                                                                       */
-  /*                                                                       */
-  /* II - Error Message strings                                            */
-  /* --------------------------                                            */
-  /*                                                                       */
-  /*   The error definitions below are made through special macros that    */
-  /*   allow client applications to build a table of error message strings */
-  /*   if they need it.  The strings are not included in a normal build of */
-  /*   FreeType 2 to save space (most client applications do not use       */
-  /*   them).                                                              */
-  /*                                                                       */
-  /*   To do so, you have to define the following macros before including  */
-  /*   this file:                                                          */
-  /*                                                                       */
-  /*   FT_ERROR_START_LIST ::                                              */
-  /*     This macro is called before anything else to define the start of  */
-  /*     the error list.  It is followed by several FT_ERROR_DEF calls     */
-  /*     (see below).                                                      */
-  /*                                                                       */
-  /*   FT_ERROR_DEF( e, v, s ) ::                                          */
-  /*     This macro is called to define one single error.                  */
-  /*     `e' is the error code identifier (e.g. FT_Err_Invalid_Argument).  */
-  /*     `v' is the error numerical value.                                 */
-  /*     `s' is the corresponding error string.                            */
-  /*                                                                       */
-  /*   FT_ERROR_END_LIST ::                                                */
-  /*     This macro ends the list.                                         */
-  /*                                                                       */
-  /*   Additionally, you have to undefine __FTERRORS_H__ before #including */
-  /*   this file.                                                          */
-  /*                                                                       */
-  /*   Here is a simple example:                                           */
-  /*                                                                       */
-  /*     {                                                                 */
-  /*       #undef __FTERRORS_H__                                           */
-  /*       #define FT_ERRORDEF( e, v, s )  { e, s },                       */
-  /*       #define FT_ERROR_START_LIST     {                               */
-  /*       #define FT_ERROR_END_LIST       { 0, 0 } };                     */
-  /*                                                                       */
-  /*       const struct                                                    */
-  /*       {                                                               */
-  /*         int          err_code;                                        */
-  /*         const char*  err_msg;                                         */
-  /*       } ft_errors[] =                                                 */
-  /*                                                                       */
-  /*       #include FT_ERRORS_H                                            */
-  /*     }                                                                 */
-  /*                                                                       */
-  /*************************************************************************/
-
-#ifndef __FTERRORS_H__
-#define __FTERRORS_H__
-
-  /* include module base error codes */
-
-/*** Start of inlined file: ftmoderr.h ***/
-/*                                                                         */
-/*  ftmoderr.h                                                             */
-/*                                                                         */
-/*    FreeType module error offsets (specification).                       */
-/*                                                                         */
-/*  Copyright 2001-2005, 2010, 2013 by                                     */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used,       */
-/*  modified, and distributed under the terms of the FreeType project      */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
-/*                                                                         */
-/***************************************************************************/
-
-  /*************************************************************************/
-  /*                                                                       */
-  /* This file is used to define the FreeType module error codes.          */
-  /*                                                                       */
-  /* If the macro FT_CONFIG_OPTION_USE_MODULE_ERRORS in `ftoption.h' is    */
-  /* set, the lower byte of an error value identifies the error code as    */
-  /* usual.  In addition, the higher byte identifies the module.  For      */
-  /* example, the error `FT_Err_Invalid_File_Format' has value 0x0003, the */
-  /* error `TT_Err_Invalid_File_Format' has value 0x1303, the error        */
-  /* `T1_Err_Invalid_File_Format' has value 0x1403, etc.                   */
-  /*                                                                       */
-  /* Note that `FT_Err_Ok', `TT_Err_Ok', etc. are always equal to zero,    */
-  /* including the high byte.                                              */
-  /*                                                                       */
-  /* If FT_CONFIG_OPTION_USE_MODULE_ERRORS isn't set, the higher byte of   */
-  /* an error value is set to zero.                                        */
-  /*                                                                       */
-  /* To hide the various `XXX_Err_' prefixes in the source code, FreeType  */
-  /* provides some macros in `fttypes.h'.                                  */
-  /*                                                                       */
-  /*   FT_ERR( err )                                                       */
-  /*     Add current error module prefix (as defined with the              */
-  /*     `FT_ERR_PREFIX' macro) to `err'.  For example, in the BDF module  */
-  /*     the line                                                          */
-  /*                                                                       */
-  /*       error = FT_ERR( Invalid_Outline );                              */
-  /*                                                                       */
-  /*     expands to                                                        */
-  /*                                                                       */
-  /*       error = BDF_Err_Invalid_Outline;                                */
-  /*                                                                       */
-  /*     For simplicity, you can always use `FT_Err_Ok' directly instead   */
-  /*     of `FT_ERR( Ok )'.                                                */
-  /*                                                                       */
-  /*   FT_ERR_EQ( errcode, err )                                           */
-  /*   FT_ERR_NEQ( errcode, err )                                          */
-  /*     Compare error code `errcode' with the error `err' for equality    */
-  /*     and inequality, respectively.  Example:                           */
-  /*                                                                       */
-  /*       if ( FT_ERR_EQ( error, Invalid_Outline ) )                      */
-  /*         ...                                                           */
-  /*                                                                       */
-  /*     Using this macro you don't have to think about error prefixes.    */
-  /*     Of course, if module errors are not active, the above example is  */
-  /*     the same as                                                       */
-  /*                                                                       */
-  /*       if ( error == FT_Err_Invalid_Outline )                          */
-  /*         ...                                                           */
-  /*                                                                       */
-  /*   FT_ERROR_BASE( errcode )                                            */
-  /*   FT_ERROR_MODULE( errcode )                                          */
-  /*     Get base error and module error code, respectively.               */
-  /*                                                                       */
-  /*                                                                       */
-  /* It can also be used to create a module error message table easily     */
-  /* with something like                                                   */
-  /*                                                                       */
-  /*   {                                                                   */
-  /*     #undef __FTMODERR_H__                                             */
-  /*     #define FT_MODERRDEF( e, v, s )  { FT_Mod_Err_ ## e, s },         */
-  /*     #define FT_MODERR_START_LIST     {                                */
-  /*     #define FT_MODERR_END_LIST       { 0, 0 } };                      */
-  /*                                                                       */
-  /*     const struct                                                      */
-  /*     {                                                                 */
-  /*       int          mod_err_offset;                                    */
-  /*       const char*  mod_err_msg                                        */
-  /*     } ft_mod_errors[] =                                               */
-  /*                                                                       */
-  /*     #include FT_MODULE_ERRORS_H                                       */
-  /*   }                                                                   */
-  /*                                                                       */
-  /*************************************************************************/
-
-#ifndef __FTMODERR_H__
-#define __FTMODERR_H__
-
-  /*******************************************************************/
-  /*******************************************************************/
-  /*****                                                         *****/
-  /*****                       SETUP MACROS                      *****/
-  /*****                                                         *****/
-  /*******************************************************************/
-  /*******************************************************************/
-
-#undef  FT_NEED_EXTERN_C
-
-#ifndef FT_MODERRDEF
-
-#ifdef FT_CONFIG_OPTION_USE_MODULE_ERRORS
-#define FT_MODERRDEF( e, v, s )  FT_Mod_Err_ ## e = v,
-#else
-#define FT_MODERRDEF( e, v, s )  FT_Mod_Err_ ## e = 0,
-#endif
-
-#define FT_MODERR_START_LIST  enum {
-#define FT_MODERR_END_LIST    FT_Mod_Err_Max };
-
-#ifdef __cplusplus
-#define FT_NEED_EXTERN_C
-  extern "C" {
-#endif
-
-#endif /* !FT_MODERRDEF */
-
-  /*******************************************************************/
-  /*******************************************************************/
-  /*****                                                         *****/
-  /*****               LIST MODULE ERROR BASES                   *****/
-  /*****                                                         *****/
-  /*******************************************************************/
-  /*******************************************************************/
-
-#ifdef FT_MODERR_START_LIST
-  FT_MODERR_START_LIST
-#endif
-
-  FT_MODERRDEF( Base,      0x000, "base module" )
-  FT_MODERRDEF( Autofit,   0x100, "autofitter module" )
-  FT_MODERRDEF( BDF,       0x200, "BDF module" )
-  FT_MODERRDEF( Bzip2,     0x300, "Bzip2 module" )
-  FT_MODERRDEF( Cache,     0x400, "cache module" )
-  FT_MODERRDEF( CFF,       0x500, "CFF module" )
-  FT_MODERRDEF( CID,       0x600, "CID module" )
-  FT_MODERRDEF( Gzip,      0x700, "Gzip module" )
-  FT_MODERRDEF( LZW,       0x800, "LZW module" )
-  FT_MODERRDEF( OTvalid,   0x900, "OpenType validation module" )
-  FT_MODERRDEF( PCF,       0xA00, "PCF module" )
-  FT_MODERRDEF( PFR,       0xB00, "PFR module" )
-  FT_MODERRDEF( PSaux,     0xC00, "PS auxiliary module" )
-  FT_MODERRDEF( PShinter,  0xD00, "PS hinter module" )
-  FT_MODERRDEF( PSnames,   0xE00, "PS names module" )
-  FT_MODERRDEF( Raster,    0xF00, "raster module" )
-  FT_MODERRDEF( SFNT,     0x1000, "SFNT module" )
-  FT_MODERRDEF( Smooth,   0x1100, "smooth raster module" )
-  FT_MODERRDEF( TrueType, 0x1200, "TrueType module" )
-  FT_MODERRDEF( Type1,    0x1300, "Type 1 module" )
-  FT_MODERRDEF( Type42,   0x1400, "Type 42 module" )
-  FT_MODERRDEF( Winfonts, 0x1500, "Windows FON/FNT module" )
-  FT_MODERRDEF( GXvalid,  0x1600, "GX validation module" )
-
-#ifdef FT_MODERR_END_LIST
-  FT_MODERR_END_LIST
-#endif
-
-  /*******************************************************************/
-  /*******************************************************************/
-  /*****                                                         *****/
-  /*****                      CLEANUP                            *****/
-  /*****                                                         *****/
-  /*******************************************************************/
-  /*******************************************************************/
-
-#ifdef FT_NEED_EXTERN_C
-  }
-#endif
-
-#undef FT_MODERR_START_LIST
-#undef FT_MODERR_END_LIST
-#undef FT_MODERRDEF
-#undef FT_NEED_EXTERN_C
-
-#endif /* __FTMODERR_H__ */
-
-/* END */
-
-/*** End of inlined file: ftmoderr.h ***/
-
-
-  /*******************************************************************/
-  /*******************************************************************/
-  /*****                                                         *****/
-  /*****                       SETUP MACROS                      *****/
-  /*****                                                         *****/
-  /*******************************************************************/
-  /*******************************************************************/
-
-#undef  FT_NEED_EXTERN_C
-
-  /* FT_ERR_PREFIX is used as a prefix for error identifiers. */
-  /* By default, we use `FT_Err_'.                            */
-  /*                                                          */
-#ifndef FT_ERR_PREFIX
-#define FT_ERR_PREFIX  FT_Err_
-#endif
-
-  /* FT_ERR_BASE is used as the base for module-specific errors. */
-  /*                                                             */
-#ifdef FT_CONFIG_OPTION_USE_MODULE_ERRORS
-
-#ifndef FT_ERR_BASE
-#define FT_ERR_BASE  FT_Mod_Err_Base
-#endif
-
-#else
-
-#undef FT_ERR_BASE
-#define FT_ERR_BASE  0
-
-#endif /* FT_CONFIG_OPTION_USE_MODULE_ERRORS */
-
-  /* If FT_ERRORDEF is not defined, we need to define a simple */
-  /* enumeration type.                                         */
-  /*                                                           */
-#ifndef FT_ERRORDEF
-
-#define FT_ERRORDEF( e, v, s )  e = v,
-#define FT_ERROR_START_LIST     enum {
-#define FT_ERROR_END_LIST       FT_ERR_CAT( FT_ERR_PREFIX, Max ) };
-
-#ifdef __cplusplus
-#define FT_NEED_EXTERN_C
-  extern "C" {
-#endif
-
-#endif /* !FT_ERRORDEF */
-
-  /* this macro is used to define an error */
-#define FT_ERRORDEF_( e, v, s )                                             \
-		  FT_ERRORDEF( FT_ERR_CAT( FT_ERR_PREFIX, e ), v + FT_ERR_BASE, s )
-
-  /* this is only used for <module>_Err_Ok, which must be 0! */
-#define FT_NOERRORDEF_( e, v, s )                             \
-		  FT_ERRORDEF( FT_ERR_CAT( FT_ERR_PREFIX, e ), v, s )
-
-#ifdef FT_ERROR_START_LIST
-  FT_ERROR_START_LIST
-#endif
-
-  /* now include the error codes */
-
-/*** Start of inlined file: fterrdef.h ***/
-/*                                                                         */
-/*  fterrdef.h                                                             */
-/*                                                                         */
-/*    FreeType error codes (specification).                                */
-/*                                                                         */
-/*  Copyright 2002, 2004, 2006, 2007, 2010-2013 by                         */
-/*  David Turner, Robert Wilhelm, and Werner Lemberg.                      */
-/*                                                                         */
-/*  This file is part of the FreeType project, and may only be used,       */
-/*  modified, and distributed under the terms of the FreeType project      */
-/*  license, LICENSE.TXT.  By continuing to use, modify, or distribute     */
-/*  this file you indicate that you have read the license and              */
-/*  understand and accept it fully.                                        */
-/*                                                                         */
-/***************************************************************************/
-
-  /*******************************************************************/
-  /*******************************************************************/
-  /*****                                                         *****/
-  /*****                LIST OF ERROR CODES/MESSAGES             *****/
-  /*****                                                         *****/
-  /*******************************************************************/
-  /*******************************************************************/
-
-  /* You need to define both FT_ERRORDEF_ and FT_NOERRORDEF_ before */
-  /* including this file.                                           */
-
-  /* generic errors */
-
-  FT_NOERRORDEF_( Ok,                                        0x00, \
-				  "no error" )
-
-  FT_ERRORDEF_( Cannot_Open_Resource,                        0x01, \
-				"cannot open resource" )
-  FT_ERRORDEF_( Unknown_File_Format,                         0x02, \
-				"unknown file format" )
-  FT_ERRORDEF_( Invalid_File_Format,                         0x03, \
-				"broken file" )
-  FT_ERRORDEF_( Invalid_Version,                             0x04, \
-				"invalid FreeType version" )
-  FT_ERRORDEF_( Lower_Module_Version,                        0x05, \
-				"module version is too low" )
-  FT_ERRORDEF_( Invalid_Argument,                            0x06, \
-				"invalid argument" )
-  FT_ERRORDEF_( Unimplemented_Feature,                       0x07, \
-				"unimplemented feature" )
-  FT_ERRORDEF_( Invalid_Table,                               0x08, \
-				"broken table" )
-  FT_ERRORDEF_( Invalid_Offset,                              0x09, \
-				"broken offset within table" )
-  FT_ERRORDEF_( Array_Too_Large,                             0x0A, \
-				"array allocation size too large" )
-  FT_ERRORDEF_( Missing_Module,                              0x0B, \
-				"missing module" )
-  FT_ERRORDEF_( Missing_Property,                            0x0C, \
-				"missing property" )
-
-  /* glyph/character errors */
-
-  FT_ERRORDEF_( Invalid_Glyph_Index,                         0x10, \
-				"invalid glyph index" )
-  FT_ERRORDEF_( Invalid_Character_Code,                      0x11, \
-				"invalid character code" )
-  FT_ERRORDEF_( Invalid_Glyph_Format,                        0x12, \
-				"unsupported glyph image format" )
-  FT_ERRORDEF_( Cannot_Render_Glyph,                         0x13, \
-				"cannot render this glyph format" )
-  FT_ERRORDEF_( Invalid_Outline,                             0x14, \
-				"invalid outline" )
-  FT_ERRORDEF_( Invalid_Composite,                           0x15, \
-				"invalid composite glyph" )
-  FT_ERRORDEF_( Too_Many_Hints,                              0x16, \
-				"too many hints" )
-  FT_ERRORDEF_( Invalid_Pixel_Size,                          0x17, \
-				"invalid pixel size" )
-
-  /* handle errors */
-
-  FT_ERRORDEF_( Invalid_Handle,                              0x20, \
-				"invalid object handle" )
-  FT_ERRORDEF_( Invalid_Library_Handle,                      0x21, \
-				"invalid library handle" )
-  FT_ERRORDEF_( Invalid_Driver_Handle,                       0x22, \
-				"invalid module handle" )
-  FT_ERRORDEF_( Invalid_Face_Handle,                         0x23, \
-				"invalid face handle" )
-  FT_ERRORDEF_( Invalid_Size_Handle,                         0x24, \
-				"invalid size handle" )
-  FT_ERRORDEF_( Invalid_Slot_Handle,                         0x25, \
-				"invalid glyph slot handle" )
-  FT_ERRORDEF_( Invalid_CharMap_Handle,                      0x26, \
-				"invalid charmap handle" )
-  FT_ERRORDEF_( Invalid_Cache_Handle,                        0x27, \
-				"invalid cache manager handle" )
-  FT_ERRORDEF_( Invalid_Stream_Handle,                       0x28, \
-				"invalid stream handle" )
-
-  /* driver errors */
-
-  FT_ERRORDEF_( Too_Many_Drivers,                            0x30, \
-				"too many modules" )
-  FT_ERRORDEF_( Too_Many_Extensions,                         0x31, \
-				"too many extensions" )
-
-  /* memory errors */
-
-  FT_ERRORDEF_( Out_Of_Memory,                               0x40, \
-				"out of memory" )
-  FT_ERRORDEF_( Unlisted_Object,                             0x41, \
-				"unlisted object" )
-
-  /* stream errors */
-
-  FT_ERRORDEF_( Cannot_Open_Stream,                          0x51, \
-				"cannot open stream" )
-  FT_ERRORDEF_( Invalid_Stream_Seek,                         0x52, \
-				"invalid stream seek" )
-  FT_ERRORDEF_( Invalid_Stream_Skip,                         0x53, \
-				"invalid stream skip" )
-  FT_ERRORDEF_( Invalid_Stream_Read,                         0x54, \
-				"invalid stream read" )
-  FT_ERRORDEF_( Invalid_Stream_Operation,                    0x55, \
-				"invalid stream operation" )
-  FT_ERRORDEF_( Invalid_Frame_Operation,                     0x56, \
-				"invalid frame operation" )
-  FT_ERRORDEF_( Nested_Frame_Access,                         0x57, \
-				"nested frame access" )
-  FT_ERRORDEF_( Invalid_Frame_Read,                          0x58, \
-				"invalid frame read" )
-
-  /* raster errors */
-
-  FT_ERRORDEF_( Raster_Uninitialized,                        0x60, \
-				"raster uninitialized" )
-  FT_ERRORDEF_( Raster_Corrupted,                            0x61, \
-				"raster corrupted" )
-  FT_ERRORDEF_( Raster_Overflow,                             0x62, \
-				"raster overflow" )
-  FT_ERRORDEF_( Raster_Negative_Height,                      0x63, \
-				"negative height while rastering" )
-
-  /* cache errors */
-
-  FT_ERRORDEF_( Too_Many_Caches,                             0x70, \
-				"too many registered caches" )
-
-  /* TrueType and SFNT errors */
-
-  FT_ERRORDEF_( Invalid_Opcode,                              0x80, \
-				"invalid opcode" )
-  FT_ERRORDEF_( Too_Few_Arguments,                           0x81, \
-				"too few arguments" )
-  FT_ERRORDEF_( Stack_Overflow,                              0x82, \
-				"stack overflow" )
-  FT_ERRORDEF_( Code_Overflow,                               0x83, \
-				"code overflow" )
-  FT_ERRORDEF_( Bad_Argument,                                0x84, \
-				"bad argument" )
-  FT_ERRORDEF_( Divide_By_Zero,                              0x85, \
-				"division by zero" )
-  FT_ERRORDEF_( Invalid_Reference,                           0x86, \
-				"invalid reference" )
-  FT_ERRORDEF_( Debug_OpCode,                                0x87, \
-				"found debug opcode" )
-  FT_ERRORDEF_( ENDF_In_Exec_Stream,                         0x88, \
-				"found ENDF opcode in execution stream" )
-  FT_ERRORDEF_( Nested_DEFS,                                 0x89, \
-				"nested DEFS" )
-  FT_ERRORDEF_( Invalid_CodeRange,                           0x8A, \
-				"invalid code range" )
-  FT_ERRORDEF_( Execution_Too_Long,                          0x8B, \
-				"execution context too long" )
-  FT_ERRORDEF_( Too_Many_Function_Defs,                      0x8C, \
-				"too many function definitions" )
-  FT_ERRORDEF_( Too_Many_Instruction_Defs,                   0x8D, \
-				"too many instruction definitions" )
-  FT_ERRORDEF_( Table_Missing,                               0x8E, \
-				"SFNT font table missing" )
-  FT_ERRORDEF_( Horiz_Header_Missing,                        0x8F, \
-				"horizontal header (hhea) table missing" )
-  FT_ERRORDEF_( Locations_Missing,                           0x90, \
-				"locations (loca) table missing" )
-  FT_ERRORDEF_( Name_Table_Missing,                          0x91, \
-				"name table missing" )
-  FT_ERRORDEF_( CMap_Table_Missing,                          0x92, \
-				"character map (cmap) table missing" )
-  FT_ERRORDEF_( Hmtx_Table_Missing,                          0x93, \
-				"horizontal metrics (hmtx) table missing" )
-  FT_ERRORDEF_( Post_Table_Missing,                          0x94, \
-				"PostScript (post) table missing" )
-  FT_ERRORDEF_( Invalid_Horiz_Metrics,                       0x95, \
-				"invalid horizontal metrics" )
-  FT_ERRORDEF_( Invalid_CharMap_Format,                      0x96, \
-				"invalid character map (cmap) format" )
-  FT_ERRORDEF_( Invalid_PPem,                                0x97, \
-				"invalid ppem value" )
-  FT_ERRORDEF_( Invalid_Vert_Metrics,                        0x98, \
-				"invalid vertical metrics" )
-  FT_ERRORDEF_( Could_Not_Find_Context,                      0x99, \
-				"could not find context" )
-  FT_ERRORDEF_( Invalid_Post_Table_Format,                   0x9A, \
-				"invalid PostScript (post) table format" )
-  FT_ERRORDEF_( Invalid_Post_Table,                          0x9B, \
-				"invalid PostScript (post) table" )
-
-  /* CFF, CID, and Type 1 errors */
-
-  FT_ERRORDEF_( Syntax_Error,                                0xA0, \
-				"opcode syntax error" )
-  FT_ERRORDEF_( Stack_Underflow,                             0xA1, \
-				"argument stack underflow" )
-  FT_ERRORDEF_( Ignore,                                      0xA2, \
-				"ignore" )
-  FT_ERRORDEF_( No_Unicode_Glyph_Name,                       0xA3, \
-				"no Unicode glyph name found" )
-  FT_ERRORDEF_( Glyph_Too_Big,                               0xA4, \
-				"glyph to big for hinting" )
-
-  /* BDF errors */
-
-  FT_ERRORDEF_( Missing_Startfont_Field,                     0xB0, \
-				"`STARTFONT' field missing" )
-  FT_ERRORDEF_( Missing_Font_Field,                          0xB1, \
-				"`FONT' field missing" )
-  FT_ERRORDEF_( Missing_Size_Field,                          0xB2, \
-				"`SIZE' field missing" )
-  FT_ERRORDEF_( Missing_Fontboundingbox_Field,               0xB3, \
-				"`FONTBOUNDINGBOX' field missing" )
-  FT_ERRORDEF_( Missing_Chars_Field,                         0xB4, \
-				"`CHARS' field missing" )
-  FT_ERRORDEF_( Missing_Startchar_Field,                     0xB5, \
-				"`STARTCHAR' field missing" )
-  FT_ERRORDEF_( Missing_Encoding_Field,                      0xB6, \
-				"`ENCODING' field missing" )
-  FT_ERRORDEF_( Missing_Bbx_Field,                           0xB7, \
-				"`BBX' field missing" )
-  FT_ERRORDEF_( Bbx_Too_Big,                                 0xB8, \
-				"`BBX' too big" )
-  FT_ERRORDEF_( Corrupted_Font_Header,                       0xB9, \
-				"Font header corrupted or missing fields" )
-  FT_ERRORDEF_( Corrupted_Font_Glyphs,                       0xBA, \
-				"Font glyphs corrupted or missing fields" )
-
-/* END */
-
-/*** End of inlined file: fterrdef.h ***/
-
-
-#ifdef FT_ERROR_END_LIST
-  FT_ERROR_END_LIST
-#endif
-
-  /*******************************************************************/
-  /*******************************************************************/
-  /*****                                                         *****/
-  /*****                      SIMPLE CLEANUP                     *****/
-  /*****                                                         *****/
-  /*******************************************************************/
-  /*******************************************************************/
-
-#ifdef FT_NEED_EXTERN_C
-  }
-#endif
-
-#undef FT_ERROR_START_LIST
-#undef FT_ERROR_END_LIST
-
-#undef FT_ERRORDEF
-#undef FT_ERRORDEF_
-#undef FT_NOERRORDEF_
-
-#undef FT_NEED_EXTERN_C
-#undef FT_ERR_BASE
-
-  /* FT_ERR_PREFIX is needed internally */
-#ifndef FT2_BUILD_LIBRARY
-#undef FT_ERR_PREFIX
-#endif
-
-#endif /* __FTERRORS_H__ */
-
-/* END */
-
-/*** End of inlined file: fterrors.h ***/
 
 FT_BEGIN_HEADER
 
@@ -5978,14 +5884,11 @@ FT_BEGIN_HEADER
   /*                           usually negative.  Only relevant for        */
   /*                           scalable formats.                           */
   /*                                                                       */
-  /*    height              :: This value is the vertical distance         */
+  /*    height              :: The height is the vertical distance         */
   /*                           between two consecutive baselines,          */
   /*                           expressed in font units.  It is always      */
   /*                           positive.  Only relevant for scalable       */
   /*                           formats.                                    */
-  /*                                                                       */
-  /*                           If you want the global glyph height, use    */
-  /*                           `ascender - descender'.                     */
   /*                                                                       */
   /*    max_advance_width   :: The maximum advance width, in font units,   */
   /*                           for all glyphs in this face.  This can be   */
@@ -6212,8 +6115,8 @@ FT_BEGIN_HEADER
    *   FT_HAS_VERTICAL( face )
    *
    * @description:
-   *   A macro that returns true whenever a face object contains real
-   *   vertical metrics (and not only synthesized ones).
+   *   A macro that returns true whenever a face object contains vertical
+   *   metrics.
    *
    */
 #define FT_HAS_VERTICAL( face ) \
@@ -7299,12 +7202,6 @@ FT_BEGIN_HEADER
   /*    particular bitmap strike.  Use @FT_Select_Size instead in that     */
   /*    case.                                                              */
   /*                                                                       */
-  /*    The relation between the requested size and the resulting glyph    */
-  /*    size is dependent entirely on how the size is defined in the       */
-  /*    source face.  The font designer chooses the final size of each     */
-  /*    glyph relative to this size.  For more information refer to        */
-  /*    `http://www.freetype.org/freetype2/docs/glyphs/glyphs-2.html'      */
-  /*                                                                       */
   FT_EXPORT( FT_Error )
   FT_Request_Size( FT_Face          face,
 				   FT_Size_Request  req );
@@ -7371,11 +7268,6 @@ FT_BEGIN_HEADER
   /*                                                                       */
   /* <Return>                                                              */
   /*    FreeType error code.  0~means success.                             */
-  /*                                                                       */
-  /* <Note>                                                                */
-  /*    You should not rely on the resulting glyphs matching, or being     */
-  /*    constrained, to this pixel size.  Refer to @FT_Request_Size to     */
-  /*    understand how requested sizes relate to actual sizes.             */
   /*                                                                       */
   FT_EXPORT( FT_Error )
   FT_Set_Pixel_Sizes( FT_Face  face,
@@ -7487,20 +7379,14 @@ FT_BEGIN_HEADER
    *     behaviour to more specific and useful cases.
    *
    *   FT_LOAD_NO_SCALE ::
-   *     Don't scale the loaded outline glyph but keep it in font units.
+   *     Don't scale the outline glyph loaded, but keep it in font units.
    *
    *     This flag implies @FT_LOAD_NO_HINTING and @FT_LOAD_NO_BITMAP, and
    *     unsets @FT_LOAD_RENDER.
    *
-   *     If the font is `tricky' (see @FT_FACE_FLAG_TRICKY for more), using
-   *     FT_LOAD_NO_SCALE usually yields meaningless outlines because the
-   *     subglyphs must be scaled and positioned with hinting instructions.
-   *     This can be solved by loading the font without FT_LOAD_NO_SCALE and
-   *     setting the character size to `font->units_per_EM'.
-   *
    *   FT_LOAD_NO_HINTING ::
-   *     Disable hinting.  This generally generates `blurrier' bitmap glyphs
-   *     when the glyph are rendered in any of the anti-aliased modes.  See
+   *     Disable hinting.  This generally generates `blurrier' bitmap glyph
+   *     when the glyph is rendered in any of the anti-aliased modes.  See
    *     also the note below.
    *
    *     This flag is implied by @FT_LOAD_NO_SCALE.
@@ -7519,14 +7405,8 @@ FT_BEGIN_HEADER
    *     @FT_LOAD_NO_SCALE always sets this flag.
    *
    *   FT_LOAD_VERTICAL_LAYOUT ::
-   *     Load the glyph for vertical text layout.  In particular, the
-   *     `advance' value in the @FT_GlyphSlotRec structure is set to the
-   *     `vertAdvance' value of the `metrics' field.
-   *
-   *     In case @FT_HAS_VERTICAL doesn't return true, you shouldn't use
-   *     this flag currently.  Reason is that in this case vertical metrics
-   *     get synthesized, and those values are not always consistent across
-   *     various font formats.
+   *     Load the glyph for vertical text layout.  _Don't_ use it as it is
+   *     problematic currently.
    *
    *   FT_LOAD_FORCE_AUTOHINT ::
    *     Indicates that the auto-hinter is preferred over the font's native
@@ -8461,13 +8341,9 @@ FT_BEGIN_HEADER
   /*    code range for CJK characters.                                     */
   /*                                                                       */
   /*    An IVS is registered and unique; for further details please refer  */
-  /*    to Unicode Technical Standard #37, the Ideographic Variation       */
-  /*    Database:                                                          */
-  /*                                                                       */
-  /*      http://www.unicode.org/reports/tr37/                             */
-  /*                                                                       */
-  /*    To date (November 2012), the character with the most variants is   */
-  /*    U+9089, having 31 such IVS.                                        */
+  /*    to Unicode Technical Report #37, the Ideographic Variation         */
+  /*    Database.  To date (October 2007), the character with the most     */
+  /*    variants is U+908A, having 8~such IVS.                             */
   /*                                                                       */
   /*    Adobe and MS decided to support IVS with a new cmap subtable       */
   /*    (format~14).  It is an odd subtable because it is not a mapping of */
@@ -8724,7 +8600,7 @@ FT_BEGIN_HEADER
   /* <Description>                                                         */
   /*    A very simple function used to perform the computation             */
   /*    `(a*b)/0x10000' with maximum accuracy.  Most of the time this is   */
-  /*    used to multiply a given value by a 16.16 fixed-point factor.      */
+  /*    used to multiply a given value by a 16.16 fixed float factor.      */
   /*                                                                       */
   /* <Input>                                                               */
   /*    a :: The first multiplier.                                         */
@@ -8768,7 +8644,7 @@ FT_BEGIN_HEADER
   /* <Description>                                                         */
   /*    A very simple function used to perform the computation             */
   /*    `(a*0x10000)/b' with maximum accuracy.  Most of the time, this is  */
-  /*    used to divide a given value by a 16.16 fixed-point factor.        */
+  /*    used to divide a given value by a 16.16 fixed float factor.        */
   /*                                                                       */
   /* <Input>                                                               */
   /*    a :: The first multiplier.                                         */
@@ -8901,7 +8777,7 @@ FT_BEGIN_HEADER
    */
 #define FREETYPE_MAJOR  2
 #define FREETYPE_MINOR  4
-#define FREETYPE_PATCH  12
+#define FREETYPE_PATCH  10
 
   /*************************************************************************/
   /*                                                                       */
@@ -9225,7 +9101,7 @@ FT_BEGIN_HEADER
   /*                                                                       */
   /* <Description>                                                         */
   /*    The root glyph structure contains a given glyph image plus its     */
-  /*    advance width in 16.16 fixed-point format.                         */
+  /*    advance width in 16.16 fixed float format.                         */
   /*                                                                       */
   /* <Fields>                                                              */
   /*    library :: A handle to the FreeType library object.                */
@@ -9853,10 +9729,8 @@ FT_BEGIN_HEADER
   /*                   destroying the library, by @FT_Done_FreeType.       */
   /*                                                                       */
   /*    numPoints   :: The maximum number of points within the outline.    */
-  /*                   Must be smaller than or equal to 0xFFFF (65535).    */
   /*                                                                       */
   /*    numContours :: The maximum number of contours within the outline.  */
-  /*                   This value must be in the range 0 to `numPoints'.   */
   /*                                                                       */
   /* <Output>                                                              */
   /*    anoutline   :: A handle to the new outline.                        */
@@ -10272,4 +10146,3 @@ FT_END_HEADER
 #ifdef _MSC_VER
 #pragma pop_macro("_CRT_SECURE_NO_WARNINGS")
 #endif
-

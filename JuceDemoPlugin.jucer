@@ -60,6 +60,7 @@
           file="Source/PluginEditor.cpp"/>
     <FILE id="Iif5nfHL" name="PluginEditor.h" compile="0" resource="0"
           file="Source/PluginEditor.h"/>
+    <FILE id="b9VzpV" name="VISITOR" compile="0" resource="1" file="VISITOR"/>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_QUICKTIME="disabled" JUCE_PLUGINHOST_VST="disabled" JUCE_PLUGINHOST_AU="disabled"
                JUCE_WEB_BROWSER="disabled"/>

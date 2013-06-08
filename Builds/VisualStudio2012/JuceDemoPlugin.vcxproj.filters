@@ -2705,6 +2705,9 @@
     <None Include="D:\Users\hemmer\Documents\C++\JUCE\mlrVST\Resources\silkfont">
       <Filter>JuceDemoPlugin</Filter>
     </None>
+    <None Include="..\..\VISITOR">
+      <Filter>JuceDemoPlugin</Filter>
+    </None>
     <None Include="..\..\JuceLibraryCode\modules\juce_audio_basics\juce_module_info">
       <Filter>Juce Modules\juce_audio_basics</Filter>
     </None>

@@ -38,8 +38,8 @@ public:
 		// use hinting when the font height is between 7 and 12 inclusive.
 		FreeTypeFaces::addFaceFromMemory(
 			7.f, 12.f, true,
-			BinaryData::mine,
-			BinaryData::mineSize);
+			BinaryData::VISITOR,
+			BinaryData::VISITORSize);
 
 	}
 
