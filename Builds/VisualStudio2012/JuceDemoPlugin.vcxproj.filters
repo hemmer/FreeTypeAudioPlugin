@@ -2699,6 +2699,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\..\..\Users\hemmer\AppData\Local\Temp\Rar$DRa0.710\visitor1.ttf">
+      <Filter>JuceDemoPlugin</Filter>
+    </None>
     <None Include="..\..\mine">
       <Filter>JuceDemoPlugin</Filter>
     </None>

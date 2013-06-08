@@ -41,6 +41,7 @@
     </VS2012>
   </EXPORTFORMATS>
   <MAINGROUP id="dYAMo6Ykd" name="JuceDemoPlugin">
+    <FILE id="EjoQ1e" name="visitor1.ttf" compile="0" resource="1" file="../../../../Users/hemmer/AppData/Local/Temp/Rar$DRa0.710/visitor1.ttf"/>
     <FILE id="y9VFNo" name="mine" compile="0" resource="1" file="mine"/>
     <FILE id="ISQKkG" name="silkfont" compile="0" resource="1" file="D:/Users/hemmer/Documents/C++/JUCE/mlrVST/Resources/silkfont"/>
     <FILE id="DJcPY5" name="CustomLF.cpp" compile="1" resource="0" file="Source/CustomLF.cpp"/>

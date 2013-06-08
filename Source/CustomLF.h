@@ -38,8 +38,8 @@ public:
 		// use hinting when the font height is between 7 and 12 inclusive.
 		FreeTypeFaces::addFaceFromMemory(
 			7.f, 12.f, true,
-			BinaryData::VISITOR,
-			BinaryData::VISITORSize);
+			BinaryData::visitor1_ttf,
+			BinaryData::visitor1_ttfSize);
 
 	}
 
@@ -61,7 +61,7 @@ public:
 			Font f (font);
 			// You'll need to know the exact name embedded in the font. There
 			// are a variety of free programs for retrieving this information.
-			f.setTypefaceName ("Minecraftia Regular");
+			f.setTypefaceName ("Visitor TT1 BRK");
 
 			DBG(f.getTypefaceName());
 

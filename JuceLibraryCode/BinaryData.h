@@ -6,6 +6,9 @@
 
 namespace BinaryData
 {
+    extern const char*   visitor1_ttf;
+    const int            visitor1_ttfSize = 27552;
+
     extern const char*   mine;
     const int            mineSize = 7382;
 
