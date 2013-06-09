@@ -41,8 +41,12 @@
     </VS2012>
   </EXPORTFORMATS>
   <MAINGROUP id="dYAMo6Ykd" name="JuceDemoPlugin">
+    <FILE id="IqDZbR" name="VERDANA.TTF" compile="0" resource="1" file="VERDANA.TTF"/>
+    <FILE id="Su9Zm8" name="KGSecondChancesSolid.ttf" compile="0" resource="1"
+          file="../../../../Users/hemmer/AppData/Local/Temp/Rar$DRa0.665/KGSecondChancesSolid.ttf"/>
+    <FILE id="Gqebuu" name="KGSecondChancesSketch.ttf" compile="0" resource="1"
+          file="KGSecondChancesSketch.ttf"/>
     <FILE id="m6uPkH" name="slkscr.ttf" compile="0" resource="1" file="slkscr.ttf"/>
-    <FILE id="EjoQ1e" name="visitor1.ttf" compile="0" resource="1" file="../../../../Users/hemmer/AppData/Local/Temp/Rar$DRa0.710/visitor1.ttf"/>
     <FILE id="y9VFNo" name="mine" compile="0" resource="1" file="mine"/>
     <FILE id="ISQKkG" name="silkfont" compile="0" resource="1" file="D:/Users/hemmer/Documents/C++/JUCE/mlrVST/Resources/silkfont"/>
     <FILE id="Hios5e" name="CustomLF.h" compile="0" resource="0" file="Source/CustomLF.h"/>

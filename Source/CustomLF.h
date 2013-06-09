@@ -37,8 +37,8 @@ public:
 		// Add the TrueType font "Helvetica Neue LT Com 65 Medium" and
 		// use hinting when the font height is between 7 and 12 inclusive.
 		FreeTypeFaces::addFaceFromMemory(
-			7.f, 12.f, true,
-			BinaryData::slkscr_ttf, BinaryData::slkscr_ttfSize);
+			7.f, 12.f, false,
+			BinaryData::VERDANA_TTF, BinaryData::VERDANA_TTFSize);
 //			BinaryData::visitor1_ttf,
 //			BinaryData::visitor1_ttfSize);
 
@@ -50,6 +50,7 @@ public:
 		// set up the font with the right size
 		//Font font(label.getFont());
 		//font.setHeight(silkFontSizeSmall);
+		//g.setFont(Font ("Verdana", 10.f, Font::plain));
 		g.setFont(Font (10.f));
 
 
@@ -75,6 +76,7 @@ public:
 		Typeface::Ptr tf;
 		String faceName (font.getTypefaceName());
 
+
 		// Make requests for the default sans serif font use our
 		// FreeType hinted font instead.
 		if (faceName == Font::getDefaultSansSerifFontName())
@@ -87,7 +89,7 @@ public:
 			Font f (font);
 			// You'll need to know the exact name embedded in the font. There
 			// are a variety of free programs for retrieving this information.
-			f.setTypefaceName ("Silkscreen");
+			f.setTypefaceName ("Verdana");
 
 			DBG(f.getTypefaceName());
 

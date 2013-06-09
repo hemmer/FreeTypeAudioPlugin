@@ -2696,10 +2696,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\slkscr.ttf">
+    <None Include="..\..\VERDANA.TTF">
       <Filter>JuceDemoPlugin</Filter>
     </None>
-    <None Include="..\..\..\..\..\..\Users\hemmer\AppData\Local\Temp\Rar$DRa0.710\visitor1.ttf">
+    <None Include="..\..\..\..\..\..\Users\hemmer\AppData\Local\Temp\Rar$DRa0.665\KGSecondChancesSolid.ttf">
+      <Filter>JuceDemoPlugin</Filter>
+    </None>
+    <None Include="..\..\KGSecondChancesSketch.ttf">
+      <Filter>JuceDemoPlugin</Filter>
+    </None>
+    <None Include="..\..\slkscr.ttf">
       <Filter>JuceDemoPlugin</Filter>
     </None>
     <None Include="..\..\mine">

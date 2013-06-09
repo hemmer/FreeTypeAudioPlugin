@@ -6,11 +6,17 @@
 
 namespace BinaryData
 {
+    extern const char*   VERDANA_TTF;
+    const int            VERDANA_TTFSize = 139640;
+
+    extern const char*   KGSecondChancesSolid_ttf;
+    const int            KGSecondChancesSolid_ttfSize = 111144;
+
+    extern const char*   KGSecondChancesSketch_ttf;
+    const int            KGSecondChancesSketch_ttfSize = 526012;
+
     extern const char*   slkscr_ttf;
     const int            slkscr_ttfSize = 7636;
-
-    extern const char*   visitor1_ttf;
-    const int            visitor1_ttfSize = 27552;
 
     extern const char*   mine;
     const int            mineSize = 7382;

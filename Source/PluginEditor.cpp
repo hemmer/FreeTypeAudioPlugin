@@ -36,10 +36,10 @@ JuceDemoPluginAudioProcessorEditor::JuceDemoPluginAudioProcessorEditor (JuceDemo
 
     // add some labels for the sliders..
     gainLabel.attachToComponent (&gainSlider, false);
-    gainLabel.setFont (Font (10.0f));
+    //gainLabel.setFont (Font (10.0f));
 
     delayLabel.attachToComponent (&delaySlider, false);
-    delayLabel.setFont (Font (10.0f));
+    //delayLabel.setFont (Font (10.0f));
 
     // add the midi keyboard component..
     addAndMakeVisible (&midiKeyboard);
